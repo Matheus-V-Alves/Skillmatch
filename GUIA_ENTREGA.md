@@ -1,6 +1,7 @@
 # 🎯 GUIA DE ENTREGA - SkillMatch360
 
 ## 2ESS GRUPO
+
 - **Gustavo Atanazio** - 559098
 - **Matheus Alves** - 555177
 - **Larissa Pereira Biusse** - 564068
@@ -12,6 +13,7 @@
 ### Arquivos Principais
 
 1. **Gs2025.2.py** (580+ linhas)
+
    - Código principal do SkillMatch360
    - Implementação completa de todas as estruturas de dados
    - Algoritmo guloso com desempate randômico
@@ -19,6 +21,7 @@
    - Dados de exemplo incluídos
 
 2. **test_skillmatch.py** (290+ linhas)
+
    - Suite completa de testes automatizados
    - 6 testes cobrindo todos os critérios de aceitação
    - Validação de determinismo, unicidade, scoring, BST, casos extremos e performance
@@ -31,12 +34,14 @@
 ### Documentação
 
 4. **RESUMO_EXECUTIVO.md**
+
    - Visão geral da solução
    - Arquitetura técnica detalhada
    - Resultados e validações
    - Análise de complexidade
 
 5. **README_SkillMatch360.md**
+
    - Documentação técnica completa
    - Como usar e customizar
    - Estrutura de dados e algoritmos
@@ -57,6 +62,7 @@ python Gs2025.2.py
 ```
 
 **O que acontece:**
+
 - Carrega 10 candidatos e 7 vagas
 - Executa o matching com seed=42
 - Exibe estatísticas completas
@@ -64,6 +70,7 @@ python Gs2025.2.py
 - Tempo: ~0.1 segundo
 
 **Saída esperada:**
+
 ```
 ✓ 7 matches realizados (100% das vagas)
 ✓ Score mais alto: 0.950
@@ -78,6 +85,7 @@ python test_skillmatch.py
 ```
 
 **O que testa:**
+
 1. ✅ Determinismo (3 execuções idênticas com seed=42)
 2. ✅ Unicidade (cada vaga/candidato max 1x)
 3. ✅ Fórmula de scoring (casos conhecidos)
@@ -94,6 +102,7 @@ python exemplos_uso.py
 ```
 
 **Demonstra:**
+
 - Matching básico
 - Top-K análise
 - Vagas não preenchidas
@@ -138,6 +147,7 @@ python exemplos_uso.py
 ### 1. Estruturas de Dados
 
 **Hash Table (dicts):**
+
 ```python
 self.candidates: Dict[str, Candidate]  # O(1) lookup
 self.jobs: Dict[str, Job]
@@ -145,17 +155,20 @@ self.job_assigned: Dict[str, str]
 ```
 
 **Grafo (lista adjacência):**
+
 ```python
 self.graph[job_id] = [(candidate_id, score), ...]
 ```
 
 **Heap (max-heap):**
+
 ```python
 heapq.heappush(self.heap, (-score, job_id, candidate_id))
 # Score negado para max-heap
 ```
 
 **BST (árvore binária):**
+
 ```python
 class BSTNode:
     score: float
@@ -167,6 +180,7 @@ class BSTNode:
 ### 2. Algoritmo Guloso com Desempate
 
 **Linhas 216-272 do Gs2025.2.py:**
+
 ```python
 # Extrai melhor aresta
 neg_score, job_id, candidate_id = heapq.heappop(self.heap)
@@ -185,12 +199,12 @@ chosen = random.choice(valid_edges)  # Seed controlável
 
 ### 3. Complexidade Algorítmica
 
-| Operação | Complexidade | Justificativa |
-|----------|--------------|---------------|
-| Scoring | O(J × C) | Para cada par |
-| Heap push | O(E log E) | E ≈ J × C |
+| Operação     | Complexidade   | Justificativa |
+| ------------ | -------------- | ------------- |
+| Scoring      | O(J × C)       | Para cada par |
+| Heap push    | O(E log E)     | E ≈ J × C     |
 | **Matching** | **O(E log E)** | **Dominante** |
-| BST insert | O(log M) | M matches |
+| BST insert   | O(log M)       | M matches     |
 
 **Total: O(J × C log(J × C))**
 
@@ -199,6 +213,7 @@ Para J=10, C=20: ~200 × 7.6 ≈ 1.500 operações → Muito eficiente!
 ### 4. Testes Automatizados
 
 **6 testes cobrindo:**
+
 1. Determinismo (execuções repetidas)
 2. Unicidade (constraints)
 3. Scoring (valores conhecidos)
@@ -209,11 +224,13 @@ Para J=10, C=20: ~200 × 7.6 ≈ 1.500 operações → Muito eficiente!
 ### 5. Documentação
 
 **3 arquivos de documentação:**
+
 - RESUMO_EXECUTIVO.md (visão geral)
 - README_SkillMatch360.md (técnico)
 - GUIA_ENTREGA.md (instruções)
 
 **Código documentado:**
+
 - Docstrings em todas as classes/funções
 - Comentários explicativos
 - Exemplos de uso
@@ -271,18 +288,21 @@ TESTE 6: PERFORMANCE
 ## 🎓 CONCEITOS APLICADOS
 
 ### Estruturas de Dados
+
 - ✅ Tabelas Hash (dicionários)
 - ✅ Grafos (lista de adjacência)
 - ✅ Heaps (fila de prioridade)
 - ✅ Árvores Binárias de Busca
 
 ### Algoritmos
+
 - ✅ Algoritmo Guloso (Greedy)
 - ✅ Travessia de Árvore (In-Order Reversa)
 - ✅ Ordenação por Heap
 - ✅ Desempate Aleatório Controlado
 
 ### Engenharia de Software
+
 - ✅ Programação Orientada a Objetos
 - ✅ Separação de Responsabilidades
 - ✅ Testes Automatizados
@@ -294,21 +314,25 @@ TESTE 6: PERFORMANCE
 ## 💡 DIFERENCIAIS DA SOLUÇÃO
 
 1. **Código Production-Ready**
+
    - Estrutura modular e reutilizável
    - Tratamento de casos extremos
    - Parâmetros configuráveis
 
 2. **Testes Abrangentes**
+
    - 6 testes automatizados
    - Cobertura de todos os requisitos
    - Validação de edge cases
 
 3. **Documentação Completa**
+
    - 3 arquivos de documentação
    - Exemplos de uso práticos
    - Análise técnica detalhada
 
 4. **Desempate Inteligente**
+
    - Fairness em empates
    - Determinismo quando necessário
    - Transparência nas decisões
@@ -368,7 +392,7 @@ A solução **SkillMatch360** implementa com sucesso todos os requisitos:
 ✅ **Testes automatizados** completos  
 ✅ **Documentação técnica** detalhada  
 ✅ **Performance excelente** (< 1s)  
-✅ **Código limpo** e modular  
+✅ **Código limpo** e modular
 
 **Status:** ✅ Pronto para entrega e apresentação
 
@@ -377,9 +401,10 @@ A solução **SkillMatch360** implementa com sucesso todos os requisitos:
 ## 📞 SUPORTE
 
 Para dúvidas ou esclarecimentos:
+
 - Verificar documentação em README_SkillMatch360.md
 - Executar exemplos em exemplos_uso.py
 - Consultar testes em test_skillmatch.py
 
 **Data de conclusão:** Novembro 2025  
-**Versão:** 1.0 - Protótipo Completo  
+**Versão:** 1.0 - Protótipo Completo

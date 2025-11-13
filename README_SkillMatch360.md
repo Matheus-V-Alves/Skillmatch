@@ -9,6 +9,7 @@ SkillMatch360 é um protótipo de motor de matching entre vagas e candidatos que
 ### 1. Estruturas de Dados Implementadas
 
 #### Hash Table (Dicionários Python)
+
 - **Uso**: Armazenamento de candidatos, vagas e alocações
 - **Complexidade**: O(1) para lookups e inserções
 - **Implementação**:
@@ -18,20 +19,23 @@ SkillMatch360 é um protótipo de motor de matching entre vagas e candidatos que
   - `self.candidate_assigned: Dict[str, str]`
 
 #### Grafo Bipartido (Lista de Adjacência)
+
 - **Uso**: Modelagem das relações vaga ↔ candidato
 - **Estrutura**: `graph[job_id] = [(candidate_id, score), ...]`
 - **Complexidade**: O(|V| + |E|) para construção
 - **Vantagem**: Representa naturalmente o problema de matching bipartido
 
 #### Heap (Fila de Prioridade)
+
 - **Uso**: Extração eficiente da aresta de maior score
 - **Implementação**: Max-heap usando `heapq` com scores negativos
-- **Complexidade**: 
+- **Complexidade**:
   - Push: O(log E)
   - Pop: O(log E)
   - E = número de arestas ≈ |Jobs| × |Candidates|
 
 #### Árvore de Busca Binária (BST)
+
 - **Uso**: Armazenamento ordenado dos matches finais
 - **Funcionalidades**:
   - Inserção por score: O(log n) esperado
@@ -46,6 +50,7 @@ score = 0.6 * skill_score + 0.3 * exp_score + loc_bonus
 ```
 
 **Componentes**:
+
 - **skill_score**: overlap de skills / total de skills requeridas [0..1]
 - **exp_score**: min(exp_candidate / min_exp_job, 2) / 2 [0..1]
 - **loc_bonus**: 0.1 se localização coincide, senão 0
@@ -55,6 +60,7 @@ score = 0.6 * skill_score + 0.3 * exp_score + loc_bonus
 ### 3. Algoritmo Guloso de Matching
 
 #### Fluxo:
+
 1. **Inicialização**: Todas as arestas no heap por prioridade
 2. **Loop principal**:
    - Pop da aresta de maior score
@@ -65,23 +71,25 @@ score = 0.6 * skill_score + 0.3 * exp_score + loc_bonus
 3. **Terminação**: Quando heap vazio ou todos alocados
 
 #### Desempate Randômico:
+
 ```python
 if len(valid_edges) > 1:
     chosen = random.choice(valid_edges)  # Seed controlável
 ```
+
 - **Determinismo**: Mesmo seed → mesmo resultado
 - **Fairness**: Empates não favorecem ordem de inserção
 
 ### 4. Complexidade Computacional
 
-| Operação | Complexidade | Descrição |
-|----------|-------------|-----------|
-| Construção de arestas | O(J × C) | J = vagas, C = candidatos |
-| Heap push todas arestas | O(E log E) | E ≈ J × C |
-| Matching guloso | O(E log E) | Cada aresta processada ≤ 1 vez |
-| BST inserção | O(log M) | M = matches finais |
-| Top-k global | O(M) | Travessia in-order |
-| Top-k por vaga | O(C log C) | Sorting local |
+| Operação                | Complexidade | Descrição                      |
+| ----------------------- | ------------ | ------------------------------ |
+| Construção de arestas   | O(J × C)     | J = vagas, C = candidatos      |
+| Heap push todas arestas | O(E log E)   | E ≈ J × C                      |
+| Matching guloso         | O(E log E)   | Cada aresta processada ≤ 1 vez |
+| BST inserção            | O(log M)     | M = matches finais             |
+| Top-k global            | O(M)         | Travessia in-order             |
+| Top-k por vaga          | O(C log C)   | Sorting local                  |
 
 **Complexidade total**: O(J × C log(J × C))
 
@@ -96,17 +104,20 @@ if len(valid_edges) > 1:
 ## Resultados da Execução de Teste
 
 ### Dataset:
+
 - **10 candidatos** com skills variadas
 - **7 vagas** em diferentes localizações
 - **65 arestas** criadas (score > 0.1)
 
 ### Resultados:
+
 - **7 matches** realizados (100% das vagas preenchidas)
 - **3 candidatos** não alocados
 - **1 desempate** executado
 - **Score mais alto**: 0.950 (Ana Silva → Desenvolvedor Python Pleno)
 
 ### Exemplo de Match:
+
 ```
 Ana Silva (Python, Django, PostgreSQL, REST API, 5 anos, SP)
     ↓ Score: 0.950
@@ -122,11 +133,13 @@ Breakdown:
 ## Como Usar
 
 ### Execução Básica:
+
 ```python
 python Gs2025.2.py
 ```
 
 ### Customização:
+
 ```python
 # Com seed para reprodutibilidade
 result = run_matching(candidates, jobs, seed=42, k_top=5)
@@ -139,6 +152,7 @@ result = run_matching(candidates, jobs, seed=42, min_score=0.2)
 ```
 
 ### Retorno:
+
 ```python
 {
     'assignments': {job_id: candidate_id, ...},
@@ -152,6 +166,7 @@ result = run_matching(candidates, jobs, seed=42, min_score=0.2)
 ## Estrutura de Dados de Entrada
 
 ### Candidato:
+
 ```python
 {
     'id': 'C001',
@@ -163,6 +178,7 @@ result = run_matching(candidates, jobs, seed=42, min_score=0.2)
 ```
 
 ### Vaga:
+
 ```python
 {
     'id': 'J001',
@@ -186,6 +202,7 @@ result = run_matching(candidates, jobs, seed=42, min_score=0.2)
 ## Validação do Determinismo
 
 Execute duas vezes com mesmo seed:
+
 ```bash
 python Gs2025.2.py  # Seed=42
 python Gs2025.2.py  # Seed=42
@@ -193,6 +210,7 @@ python Gs2025.2.py  # Seed=42
 ```
 
 Compare com seed diferente:
+
 ```python
 result1 = run_matching(candidates, jobs, seed=42)
 result2 = run_matching(candidates, jobs, seed=123)
@@ -202,6 +220,7 @@ result2 = run_matching(candidates, jobs, seed=123)
 ## Autores
 
 **2ESS GRUPO:**
+
 - Gustavo Atanazio - 559098
 - Matheus Alves - 555177
 - Larissa Pereira Biusse - 564068
