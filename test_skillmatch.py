@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # 2ESS GRUPO: 
 # Gustavo Atanazio - 559098           
 # Matheus Alves - 555177 
@@ -10,6 +11,12 @@ Demonstra diferentes cenários e valida critérios de aceitação
 
 import sys
 import importlib.util
+
+# Garante encoding UTF-8 no terminal Windows
+if sys.platform == 'win32':
+    import codecs
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
+    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
 
 # Carrega o módulo principal
 spec = importlib.util.spec_from_file_location("gs2025", "Gs2025.2.py")
@@ -49,9 +56,9 @@ def test_determinism():
     
     # Valida que todos são iguais
     if results[0] == results[1] == results[2]:
-        print("\n✓ TESTE PASSOU: Resultados idênticos com mesmo seed")
+        print("\n\033[92m[OK] TESTE PASSOU:\033[0m Resultados idênticos com mesmo seed")
     else:
-        print("\n✗ TESTE FALHOU: Resultados diferentes com mesmo seed")
+        print("\n\033[91m[FALHA] TESTE FALHOU:\033[0m Resultados diferentes com mesmo seed")
 
 
 def test_uniqueness():
@@ -85,9 +92,9 @@ def test_uniqueness():
     print(f"Candidatos únicos: {unique_candidates}/{total_candidates}")
     
     if unique_jobs == total_jobs and unique_candidates == total_candidates:
-        print("\n✓ TESTE PASSOU: Cada vaga/candidato aparece no máximo uma vez")
+        print("\n\033[92m[OK] TESTE PASSOU:\033[0m Cada vaga/candidato aparece no máximo uma vez")
     else:
-        print("\n✗ TESTE FALHOU: Duplicatas encontradas")
+        print("\n\033[91m[FALHA] TESTE FALHOU:\033[0m Duplicatas encontradas")
 
 
 def test_scoring_formula():
@@ -123,9 +130,9 @@ def test_scoring_formula():
     print(f"  Score calculado: {score3:.3f}")
     
     if 0.95 <= score1 <= 1.05 and score2 < 0.5 and 0 < score3 < 1:
-        print("\n✓ TESTE PASSOU: Fórmula de scoring funcionando corretamente")
+        print("\n\033[92m[OK] TESTE PASSOU:\033[0m Fórmula de scoring funcionando corretamente")
     else:
-        print("\n✗ TESTE FALHOU: Scores fora do esperado")
+        print("\n\033[91m[FALHA] TESTE FALHOU:\033[0m Scores fora do esperado")
 
 
 def test_bst_top_k():
@@ -162,9 +169,9 @@ def test_bst_top_k():
         print(f"  {i}. Score: {score:.3f} | Job: {job} | Cand: {cand}")
     
     if is_sorted and len(ranking) <= len(jobs):
-        print("\n✓ TESTE PASSOU: BST retorna top-k ordenado corretamente")
+        print("\n\033[92m[OK] TESTE PASSOU:\033[0m BST retorna top-k ordenado corretamente")
     else:
-        print("\n✗ TESTE FALHOU: Problemas na ordenação ou quantidade")
+        print("\n\033[91m[FALHA] TESTE FALHOU:\033[0m Problemas na ordenação ou quantidade")
 
 
 def test_edge_cases():
@@ -212,7 +219,7 @@ def test_edge_cases():
     result3 = run_matching(candidates, jobs, seed=42, min_score=0.3)
     print(f"  Matches realizados: {len(result3['assignments'])}")
     
-    print("\n✓ TESTE PASSOU: Casos extremos tratados corretamente")
+    print("\n\033[92m[OK] TESTE PASSOU:\033[0m Casos extremos tratados corretamente")
 
 
 def test_performance():
@@ -262,9 +269,9 @@ def test_performance():
     print(f"Arestas processadas: {result['stats']['edges_processed']}")
     
     if elapsed < 1.0:
-        print("\n✓ TESTE PASSOU: Execução em < 1 segundo")
+        print("\n\033[92m[OK] TESTE PASSOU:\033[0m Execução em < 1 segundo")
     else:
-        print(f"\n⚠ AVISO: Execução em {elapsed:.3f}s (esperado < 1s)")
+        print(f"\n\033[93m[AVISO]:\033[0m Execução em {elapsed:.3f}s (esperado < 1s)")
 
 
 def run_all_tests():
@@ -286,7 +293,7 @@ def run_all_tests():
         try:
             test()
         except Exception as e:
-            print(f"\n✗ ERRO no teste {test.__name__}: {e}")
+            print(f"\n\033[91m[ERRO]\033[0m no teste {test.__name__}: {e}")
     
     print("\n" + "#"*60)
     print("# SUITE DE TESTES CONCLUÍDA")

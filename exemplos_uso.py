@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # 2ESS GRUPO: 
 # Gustavo Atanazio - 559098           
 # Matheus Alves - 555177 
@@ -8,7 +9,14 @@ Exemplos de Uso do SkillMatch360
 Demonstra diferentes cenários e casos de uso
 """
 
+import sys
 import importlib.util
+
+# Garante encoding UTF-8 no terminal Windows
+if sys.platform == 'win32':
+    import codecs
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
+    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
 
 # Carrega o módulo principal
 spec = importlib.util.spec_from_file_location("gs2025", "Gs2025.2.py")
@@ -71,7 +79,7 @@ def exemplo_basico():
     
     resultado = run_matching(candidatos, vagas, seed=42, k_top=3)
     
-    print("\n📋 RESULTADO DO MATCHING:")
+    print("\n\033[92mRESULTADO DO MATCHING:\033[0m")
     for vaga_id, candidato_id in resultado['assignments'].items():
         vaga = next(v for v in vagas if v['id'] == vaga_id)
         cand = next(c for c in candidatos if c['id'] == candidato_id)
@@ -102,13 +110,13 @@ def exemplo_determinismo():
     ]
     
     # Teste com mesmo seed (deve dar igual)
-    print("\n🔄 Com MESMO seed (42):")
+    print("\n\033[96mCom MESMO seed (42):\033[0m")
     for i in range(3):
         r = run_matching(candidatos, vagas, seed=42, k_top=2)
         print(f"   Execução {i+1}: {r['assignments']}")
     
     # Teste com seeds diferentes
-    print("\n🎲 Com seeds DIFERENTES:")
+    print("\n\033[93mCom seeds DIFERENTES:\033[0m")
     for seed in [10, 20, 30]:
         r = run_matching(candidatos, vagas, seed=seed, k_top=2)
         print(f"   Seed {seed}: {r['assignments']}")
@@ -138,7 +146,7 @@ def exemplo_top_k():
     
     resultado = run_matching(candidatos, vagas, seed=42, k_top=5)
     
-    print("\n🏆 TOP-5 CANDIDATOS PARA A VAGA:")
+    print("\n\033[92mTOP-5 CANDIDATOS PARA A VAGA:\033[0m")
     for vaga_id, top_candidatos in resultado['top_k_per_job'].items():
         vaga = vagas[0]
         print(f"\n   {vaga['title']}:")
@@ -172,7 +180,7 @@ def exemplo_vagas_nao_preenchidas():
     
     resultado = run_matching(candidatos, vagas, seed=42, k_top=2)
     
-    print(f"\n📊 ESTATÍSTICAS:")
+    print(f"\n\033[95mESTATÍSTICAS:\033[0m")
     print(f"   Candidatos: {len(candidatos)}")
     print(f"   Vagas: {len(vagas)}")
     print(f"   Matches realizados: {len(resultado['assignments'])}")
@@ -185,7 +193,7 @@ def exemplo_vagas_nao_preenchidas():
         score = next(s for s, j, c in resultado['ranking'] if j == vaga_id and c == cand_id)
         print(f"   {vaga['title']:20s} → {cand['name']:20s} (Score: {score:.3f})")
     
-    print(f"\n❌ VAGAS NÃO PREENCHIDAS:")
+    print(f"\n\033[91mVAGAS NÃO PREENCHIDAS:\033[0m")
     vagas_preenchidas = set(resultado['assignments'].keys())
     for vaga in vagas:
         if vaga['id'] not in vagas_preenchidas:
@@ -251,12 +259,12 @@ def exemplo_analise_score():
     
     resultado = run_matching(candidatos_teste, [vaga_referencia], seed=42, k_top=5)
     
-    print(f"\n🎯 VAGA: {vaga_referencia['title']}")
+    print(f"\n\033[93mVAGA:\033[0m {vaga_referencia['title']}")
     print(f"   Skills requeridas: {', '.join(vaga_referencia['req_skills'])}")
     print(f"   Experiência mínima: {vaga_referencia['min_exp']} anos")
     print(f"   Localização: {vaga_referencia['location']}")
     
-    print(f"\n📊 COMPARAÇÃO DE CANDIDATOS:")
+    print(f"\n\033[93mCOMPARAÇÃO DE CANDIDATOS:\033[0m")
     for _, top_cands in resultado['top_k_per_job'].items():
         for cand_id, score in top_cands:
             cand = next(c for c in candidatos_teste if c['id'] == cand_id)
@@ -275,7 +283,7 @@ def exemplo_analise_score():
 
 
 # ============================================================
-# EXEMPLO 6: Exportando Resultados
+#  Export Resultados
 # ============================================================
 
 def exemplo_exportacao():
@@ -287,8 +295,8 @@ def exemplo_exportacao():
     candidatos, vagas = gs2025.get_sample_data()
     resultado = run_matching(candidatos, vagas, seed=42, k_top=3)
     
-    # Criar relatório em formato CSV-like
-    print("\n📄 RELATÓRIO DE MATCHES (formato CSV):")
+    # Criar relatório em formato CSV
+    print("\n RELATÓRIO DE MATCHES (formato CSV):")
     print("Vaga;Candidato;Score;Skills_Match;Exp_Candidate;Exp_Min;Location_Match")
     
     for vaga_id, cand_id in resultado['assignments'].items():
@@ -301,7 +309,7 @@ def exemplo_exportacao():
         
         print(f"{vaga['title']};{cand['name']};{score:.3f};{skills_match}/{len(vaga['req_skills'])};{cand['exp_years']};{vaga['min_exp']};{loc_match}")
     
-    print("\n💾 Este formato pode ser salvo em CSV para análise em Excel/Power BI")
+    print("\n Este formato pode ser salvo em CSV para análise em Excel/Power BI")
 
 
 # ============================================================
@@ -333,13 +341,13 @@ def menu():
     escolha = input("\nOpção: ").strip()
     
     if escolha == '0':
-        print("\n👋 Até logo!")
+        print("\nAté logo!")
         return
     
     if escolha in exemplos:
         exemplos[escolha][1]()
     else:
-        print("\n❌ Opção inválida!")
+        print("\n\033[91mOpção inválida!\033[0m")
     
     input("\n\nPressione ENTER para continuar...")
     menu()
@@ -369,5 +377,5 @@ if __name__ == '__main__':
     print("\n" + "#"*70)
     print("# DEMONSTRAÇÃO CONCLUÍDA!")
     print("#"*70)
-    print("\n💡 Dica: Execute 'python exemplos_uso.py' e escolha exemplos individuais")
+    print("\n Dica: Execute 'python exemplos_uso.py' e escolha exemplos individuais")
     print("   ou modifique o código para seus próprios cenários!")
