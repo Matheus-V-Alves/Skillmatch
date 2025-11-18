@@ -2,130 +2,151 @@
 
 **Motor de matching inteligente entre vagas e candidatos**
 
-## 👥 Equipe
+## Equipe - 2ESS FIAP
+
 - Gustavo Atanazio - 559098
 - Matheus Alves - 555177
 - Larissa Pereira Biusse - 564068
 
-## 🎯 Sobre o Projeto
+## Sobre o Projeto
 
-SkillMatch360 é um protótipo que identifica automaticamente as melhores combinações entre candidatos e vagas, utilizando estruturas de dados avançadas e algoritmo guloso com desempate randômico.
+SkillMatch360 identifica automaticamente as melhores combinações entre candidatos e vagas, utilizando estruturas de dados avançadas e algoritmo guloso com desempate randômico.
 
 ### Estruturas Implementadas
-- **Hash Table**: Armazenamento O(1) de candidatos, vagas e alocações
-- **Grafo Bipartido**: Modelagem das relações candidato↔vaga
-- **Heap**: Fila de prioridade para escolha gulosa
-- **BST**: Armazenamento ordenado dos matches
+
+- **Hash Table (dict)**: Armazenamento O(1) de candidatos, vagas e alocações
+- **Grafo Bipartido**: Modelagem das relações candidato↔vaga com lista de adjacências
+- **Heap (priority queue)**: Fila de prioridade para escolha gulosa das melhores arestas
+- **BST (Binary Search Tree)**: Armazenamento ordenado dos matches por score
 
 ### Algoritmo de Score
+
 ```
-Score = 0.6 × skills + 0.3 × experiência + 0.1 × localização
+Score = 0.6 × overlap_skills + 0.3 × experiência + 0.1 × localização
 ```
 
-## 🚀 Como Usar
+## Como Executar
 
-### Execução Básica
+### Execução Direta
+
 ```bash
 python Gs2025.2.py
 ```
 
-### Execução com Parâmetros
-```python
-from Gs2025_2 import run_matching, get_sample_data
+O programa já vem com dados de exemplo e executa automaticamente demonstrando:
 
-candidates, jobs = get_sample_data()
+- Carregamento de candidatos e vagas
+- Construção do grafo e heap
+- Matching guloso
+- Top 10 matches
+- Estatísticas completas
+
+### Uso Programático
+
+```python
+from Gs2025_2 import run_matching
+
+candidates = [
+    {'id': 'C001', 'name': 'Ana Silva', 'skills': ['Python', 'Django'],
+     'exp_years': 5, 'location': 'São Paulo'},
+]
+
+jobs = [
+    {'id': 'J001', 'title': 'Dev Python', 'req_skills': ['Python', 'Django'],
+     'min_exp': 3, 'location': 'São Paulo'},
+]
 
 # Com seed para reprodutibilidade
 result = run_matching(candidates, jobs, seed=42, k_top=5)
 
-# Aleatório
-result = run_matching(candidates, jobs, seed=None)
+# Acessando resultados
+print(result['assignments'])    # dict: job_id -> candidate_id
+print(result['ranking'])        # lista ordenada por score
+print(result['top_k_per_job'])  # top candidatos por vaga
 ```
 
-### Entrada de Dados
+## Estruturas de Dados - Detalhamento
 
-**Candidato:**
-```python
-{
-    'id': 'C001',
-    'name': 'Nome',
-    'skills': ['Python', 'Django'],
-    'exp_years': 5,
-    'location': 'São Paulo'
-}
-```
+### 1. Hash Table
 
-**Vaga:**
-```python
-{
-    'id': 'J001',
-    'title': 'Dev Python',
-    'req_skills': ['Python', 'Django'],
-    'min_exp': 3,
-    'location': 'São Paulo'
-}
-```
+**Uso**: `candidates_db`, `jobs_db`, `job_assigned`, `candidate_assigned`  
+**Justificativa**: Lookup e atualização em O(1) durante o matching
 
-## 📊 Resultados
+### 2. Grafo Bipartido
+
+**Implementação**: `graph = {job_id: [(candidate_id, score), ...]}`  
+**Justificativa**: Representa todas as possíveis combinações candidato-vaga
+
+### 3. Heap (Max-Heap)
+
+**Implementação**: heapq com scores negativos  
+**Justificativa**: Extração eficiente O(log E) da melhor aresta disponível
+
+### 4. BST
+
+**Implementação**: Árvore binária com múltiplos valores por nó  
+**Justificativa**: Permite travessia ordenada para consultas top-k
+
+## Algoritmo Guloso - Fluxo
+
+1. **Scoring**: Calcula compatibilidade para cada par (candidato, vaga)
+2. **Build**: Cria grafo e insere todas arestas no heap
+3. **Matching**:
+   - Extrai aresta de maior score
+   - Se vaga/candidato já alocados: descarta
+   - Coleta empates (diferença < epsilon)
+   - Escolhe aleatoriamente entre empates (seed controlável)
+   - Marca alocação e insere na BST
+4. **Output**: Gera assignments, ranking e top-k por vaga
+
+## Resultados Esperados
 
 ### Performance
+
 - **Tempo**: < 0.1s para 10 vagas × 20 candidatos
 - **Complexidade**: O(J × C × log(J × C))
-- **Taxa de match**: 100% das vagas no teste
+- **Taxa de match**: Depende da compatibilidade
 
 ### Exemplo de Match
-```
-Ana Silva (Python, Django, PostgreSQL, 5 anos, SP)
-    ↓ Score: 0.950
-Dev Python Pleno (Python, Django, PostgreSQL, 3+ anos, SP)
-```
 
-## 🧪 Testes
-
-```bash
-python test_skillmatch.py
+```
+[MATCH] Score: 0.950
+  Vaga: J001 - Dev Python Pleno
+  Candidato: C001 - Ana Silva
+  Skills: Python, Django, PostgreSQL | Exp: 5 anos | Local: São Paulo
 ```
 
-**Cobertura:**
-- ✅ Determinismo (seed fixo)
-- ✅ Unicidade de matches
-- ✅ Fórmula de scoring
-- ✅ BST ordenação
-- ✅ Casos extremos
-- ✅ Performance
+## Complexidade Computacional
 
-## 📁 Estrutura
+| Operação            | Complexidade | Observação                |
+| ------------------- | ------------ | ------------------------- |
+| Construção do grafo | O(J × C)     | Calcula todos os scores   |
+| Heap push           | O(E log E)   | E = arestas válidas       |
+| Matching guloso     | O(E log E)   | Cada aresta processada 1x |
+| BST inserção        | O(log M)     | M = matches realizados    |
+| Total               | O(E log E)   | E ≈ J × C no pior caso    |
+
+## Estrutura do Projeto
 
 ```
 sprintDYNpy/
-├── Gs2025.2.py              # Código principal
-├── test_skillmatch.py       # Testes automatizados
-├── exemplos_uso.py          # Exemplos práticos
-└── README.md                # Esta documentação
+├── Gs2025.2.py    # Código principal completo
+└── README.md      # Esta documentação
 ```
 
-## 🔧 Características Técnicas
+## Características Técnicas
 
-### Decisões de Design
-- **Algoritmo Guloso**: Simples e eficiente para matching
+- **Encoding UTF-8**: Suporte completo a acentuação
+- **Seed Configurável**: Determinismo para testes e produção
 - **Desempate Randômico**: Fairness entre candidatos equivalentes
-- **Seed Configurável**: Determinismo em testes
-- **Modular**: Fácil extensão e manutenção
+- **Modular**: Classes separadas facilitam manutenção
+- **Documentado**: Docstrings e comentários estratégicos
 
-### Complexidade
-| Operação | Complexidade |
-|----------|--------------|
-| Construção do grafo | O(J × C) |
-| Heap operations | O(E log E) |
-| Matching guloso | O(E log E) |
-| BST inserção | O(log M) |
+## Requisitos
 
-## 💡 Extensões Futuras
-- Balanceamento da BST (AVL/Red-Black)
-- Múltiplos matches por candidato
-- Machine Learning para calibrar pesos
-- API REST
-- Integração com banco de dados
+- Python 3.7+
+- Bibliotecas padrão: typing, dataclasses, collections, heapq, random
 
-## 📄 Licença
+## Licença
+
 Global Solution - 2ESS FIAP 2025
