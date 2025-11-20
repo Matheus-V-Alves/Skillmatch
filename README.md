@@ -8,7 +8,7 @@
 - Matheus Alves - 555177
 - Larissa Pereira Biusse - 564068
 
-#### [Link do pitch da ideia](https://youtu.be/zJq8YtI3u0w)
+## [Link do video pitch da ideia, CONFIRA NO YOUTUBE!](https://youtu.be/zJq8YtI3u0w)
 
 
 ## Sobre o Projeto
