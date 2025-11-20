@@ -153,3 +153,7 @@ sprintDYNpy/
 ## Licença
 
 Global Solution - 2ESS FIAP 2025
+
+
+[![Preview do Pitch](https://img.youtube.com/vi/zJq8YtI3u0w/maxresdefault.jpg)](https://youtu.be/zJq8YtI3u0w)
+
